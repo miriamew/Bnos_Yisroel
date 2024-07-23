@@ -15,7 +15,7 @@ upto = 0
 while upto < 1:
     response3 = requests.get('https://api.bloomerang.co/v2/households?skip='+ str(50*upto)+'&take=50',
     headers={
-    'X-API-KEY': '6404fa5b-486a-8857-40f2-ac89b86b400c'
+    'X-API-KEY': '***'c'
     },
     json={
         
@@ -31,7 +31,7 @@ while upto < 1:
             head = False
             response1 = requests.get('https://api.bloomerang.co/v2/constituent/' + str(p),
             headers={
-            'X-API-KEY': '6404fa5b-486a-8857-40f2-ac89b86b400c'
+            'X-API-KEY': '***''
             },
             json={
                 
@@ -51,7 +51,7 @@ while upto < 1:
                 for phone in (response1.json()["PhoneIds"]):
                     phoneresponse = requests.get('https://api.bloomerang.co/v2/phone/' + str(phone),
                     headers={
-                    'X-API-KEY': '6404fa5b-486a-8857-40f2-ac89b86b400c'
+                    'X-API-KEY': '***''
                     },
                     json={
                         
@@ -68,7 +68,7 @@ while upto < 1:
                 '''for phone in (response1.json()["EmailIds"]):
                     phoneresponse = requests.get('https://api.bloomerang.co/v2/email/' + str(phone),
                     headers={
-                    'X-API-KEY': '6404fa5b-486a-8857-40f2-ac89b86b400c'
+                    'X-API-KEY': '***''
                     },
                     json={
                         
@@ -78,7 +78,7 @@ while upto < 1:
                 '''for phone in (response1.json()["AddressIds"]):
                     phoneresponse = requests.get('https://api.bloomerang.co/v2/address/' + str(phone),
                     headers={
-                    'X-API-KEY': '6404fa5b-486a-8857-40f2-ac89b86b400c'
+                    'X-API-KEY': '***''
                     },
                     json={
                         
