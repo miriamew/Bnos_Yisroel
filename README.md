@@ -18,5 +18,5 @@
 * Emails out reports to teachers and admin
 * Bi - Monthly sums up total per teacher and creates reports
 
-  ## Electives Sorting
+## Electives Sorting
   * Creates reports of which classes students still need to take based on class categories, previous classes taken, and class requirements
