@@ -1,0 +1,168 @@
+function onFormSubmit(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const targetSheet2 = ss.getSheetByName('Form Submissions (CD)');
+  const targetSheet = ss.getSheetByName('Form Responses');
+  const icon = ss.getSheetByName('Icon');
+  lastDate = new Date(icon.getRange("B1").getValue())
+
+  values = e.values;
+  for (element = 0; element < values.length; element++) {
+    if (values[element].split(",").length - 1 == 2) {
+      console.log("hi")
+      values[element] = "0, " + values[element]
+      console.log(values[element])
+    }
+  }
+  console.log(values)
+  values = values.filter(function (element) {
+    // Remove elements that are empty or contain only whitespace
+
+    return element.trim() !== "";
+
+  });
+
+  submissionDate = new Date(values[1])
+  targetSheet2.appendRow(values);
+  console.log(submissionDate.valueOf())
+  console.log(lastDate.valueOf())
+  if (submissionDate.valueOf() <= lastDate.valueOf()) {
+    var infospreadsheet = SpreadsheetApp.openById('1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs');
+    var scheduleSheet = infospreadsheet.getSheetByName("Teacher Schedules");
+    var scheduledata = scheduleSheet.getDataRange().getValues();
+    for (i = 1; i < scheduledata.length; i++) {
+
+      if (values[3] == scheduledata[i][1] + " " + scheduledata[i][0]) {
+        iconId = scheduledata[i][2]
+        console.log(iconId)
+        var spreadsheet = SpreadsheetApp.openById('1Pw2keUToQdIxZ252A9Nkactnm-Tf5M6a3MtYpS0uIs0');
+        var personsheet = spreadsheet.getSheetByName(iconId);
+        persondata = personsheet.getDataRange().getValues()
+        for (j = persondata.length - 1; j > 0; j--) {
+          entryDate = new Date(persondata[j][2])
+          if (entryDate.valueOf() == submissionDate.valueOf()) {
+            console.log("match")
+            if (values[4] == "Absent") {
+              personsheet.getRange(j + 1, 13).setValue(values[5])
+              personsheet.getRange(j + 1, 14).setValue("Form - absent reason")
+            }
+            if (values[4] == "Forgot to clock in and out") {
+              time1 = formatTime(values[5])
+              time2 = formatTime(values[6])
+              personsheet.getRange(j + 1, 6).setValue(time1)
+              personsheet.getRange(j + 1, 8).setValue(time2)
+              personsheet.getRange(j + 1, 10).setValue(calculateTimes(time1, personsheet.getRange(j + 1, 7).getValue(), (values[2]).toLowerCase()))
+              personsheet.getRange(j + 1, 11).setValue(calculateTimes(personsheet.getRange(j + 1, 9).getValue(), time2, (values[2]).toLowerCase()))
+              personsheet.getRange(j + 1, 13).setValue(values[7])
+              personsheet.getRange(j + 1, 12).setValue("")
+              personsheet.getRange(j + 1, 14).setValue("Form - both punches")
+
+            }
+            if (values[4] == "Forgot to clock in") {
+              time1 = formatTime(values[5])
+              personsheet.getRange(j + 1, 6).setValue(time1)
+              personsheet.getRange(j + 1, 10).setValue(calculateTimes(time1, personsheet.getRange(j + 1, 7).getValue(), (values[2]).toLowerCase()))
+              personsheet.getRange(j + 1, 13).setValue(values[6])
+              personsheet.getRange(j + 1, 12).setValue("")
+              personsheet.getRange(j + 1, 14).setValue("Form - in punch")
+            }
+            if (values[4] == "Forgot to clock out") {
+              time2 = formatTime(values[5])
+              personsheet.getRange(j + 1, 8).setValue(time2)
+              personsheet.getRange(j + 1, 11).setValue(calculateTimes(personsheet.getRange(j + 1, 9).getValue(), time2, (values[2]).toLowerCase()))
+              personsheet.getRange(j + 1, 13).setValue(values[6])
+              personsheet.getRange(j + 1, 12).setValue("")
+              personsheet.getRange(j + 1, 14).setValue("Form - out punch")
+
+            }
+            if (values[4] == "Came late") {
+              time1 = formatTime(values[5])
+              personsheet.insertRowsAfter(j + 1, 1);
+              info = personsheet.getRange(j + 1, 1, 1, 14).getValues()
+              console.log(info)
+              personsheet.getRange(j + 2, 1, 1, 14).setValues([[info[0][0], info[0][1], info[0][2], info[0][3], info[0][4], time1, info[0][6], "", info[0][8], "", "", "", values[6], "Form - in punch"]])
+
+            }
+            if (values[4] == "Left Early") {
+              time1 = formatTime(values[5])
+              personsheet.insertRowsAfter(j + 1, 1);
+              info = personsheet.getRange(j + 1, 1, 1, 14).getValues()
+              console.log(info)
+              personsheet.getRange(j + 2, 1, 1, 14).setValues([[info[0][0], info[0][1], info[0][2], info[0][3], info[0][4], "", info[0][6], time1, info[0][8], "", "", "", values[6], "Form - out punch"]])
+
+            }
+
+          }
+
+        }
+        if (values[4] == "Left and came back") {
+          time1 = formatTime(values[5])
+          time2 = formatTime(values[6])
+          info = personsheet.getRange(personsheet.getLastRow(), 1, 1, 14).getValues()
+          console.log(info)
+          personsheet.getRange(personsheet.getLastRow() + 1, 1, 1, 14).setValues([[info[0][0], info[0][1], values[1], info[0][3], , time1, , time2, , "", "", calculateTimes(time2, time1), values[7], "Form - left during day"]])
+
+        }
+        personsheet.getRange(3, 1, personsheet.getLastRow() - 2, 14).setBorder(true, true, true, true, true, true).setFontFamily("Calibri").setHorizontalAlignment("left");
+        break
+      }
+    }
+
+
+  }
+  else {
+    console.log(values)
+
+    targetSheet.appendRow(values);
+  }
+
+
+}
+
+function installTrigger() {
+  // Install the trigger for the onFormSubmit function
+  ScriptApp.newTrigger('onFormSubmit')
+    .forSpreadsheet(SpreadsheetApp.getActive())
+    .onFormSubmit()
+    .create();
+}
+function formatTime(date) {
+  date = date.split(":")
+  let hours = date[0];
+  let minutes = date[1]
+  console.log(minutes)
+  minutes = minutes.toString().padStart(2, '0');
+  console.log(minutes)
+  let ampm = date[2][3] == "P" ? 'p' : 'a';
+  let hoursStr = hours.toString().padStart(2, '0');
+  return `${hoursStr}:${minutes}${ampm}`;
+}
+function subtractTimes(inTime, shouldstart) {
+  inTime = convertArmy(inTime)
+  shouldstart = convertArmy(shouldstart)
+  results = ((parseInt(inTime[0] + inTime[1]) - parseInt(shouldstart[0] + shouldstart[1])) * 60 +
+    (parseInt(inTime[3] + inTime[4]) - parseInt(shouldstart[3] + shouldstart[4])));
+  return results
+}
+function calculateTimes(time1, time2, division) {
+  minutes = subtractTimes(time1, time2)
+  if (division == "es" || division == "ps") {
+    if (minutes < 6) {
+      minutes = 0
+    }
+  }
+  if (minutes <= 0) {
+    return ("")
+  }
+  else { return minutes }
+}
+function convertArmy(time) {
+  if (time[5] === "p") {
+    if (time[0] === "1" && time[1] === "2") {
+      time = time;
+    }
+    else {
+      time = String(parseInt(time[0]) + 1) + String(parseInt(time[1]) + 2) + time.slice(2);
+    }
+  }
+  return time
+}
