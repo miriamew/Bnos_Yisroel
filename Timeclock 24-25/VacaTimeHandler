@@ -1,0 +1,40 @@
+function vacationEmail() {
+  var spreadsheet = SpreadsheetApp.openById('11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA');
+  var vacaSheet = spreadsheet.getSheetByName('Over-Allocated Time');
+
+  var scheduledata = vacaSheet.getDataRange().getValues();
+  var masterspreadsheet = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  body = "<p>The following people have gone over their allocated vacation time:</p><br />"
+  for (let i = 1; i < scheduledata.length; i++) {
+    Logger.log(i);
+    line = (scheduledata[i]);
+    var sheetName = String(line[2]);
+    var personsheet = masterspreadsheet.getSheetByName(sheetName);
+    var persondata = personsheet.getDataRange().getValues();
+    console.log(scheduledata[i])
+    today = new Date("9/4/2024")
+
+    month = today.getMonth()
+    console.log(today.getDate())
+    columns = [15, 17, 19, 21, 23, 25, 27, 29, 7, 9, 11, 13]
+    column = columns[month]
+    if (parseInt(today.getDate()) < 15) {
+      column = column - 1
+    }
+    if (column == 6) {
+      break
+    }
+    console.log(month)
+    console.log(scheduledata[i])
+    scheduledata[i][column] = (Math.abs(persondata[3][17]) - scheduledata[i][5])
+
+    scheduledata[i][3] = (persondata[1][17])
+    scheduledata[i][4] = (persondata[2][17])
+    scheduledata[i][5] = (persondata[3][17])
+    scheduledata[i][6] = (persondata[4][17] < 0) ? Math.abs(persondata[4][17]) : 0
+    vacaSheet.getRange(i + 1, 1, 1, scheduledata[i].length).setValues([scheduledata[i]])
+
+
+  }
+}
+
