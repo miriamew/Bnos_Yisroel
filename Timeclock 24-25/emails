@@ -1,0 +1,55 @@
+function sendEmails() {
+  var emailsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var emailsheetName = 'Email List';
+  var emailspreadsheet = SpreadsheetApp.openById(emailsheetId);
+  var emailSheet = emailspreadsheet.getSheetByName(emailsheetName);
+  emailData = emailSheet.getDataRange().getValues();
+  adminEmails = { "ps": "preschool@bnosyisroel.org", "es": "rvictor@bnosyisroel.org", "ms": "ymatitia@bnosyisroel.org", "MS Office AM": "ymatitia@bnosyisroel.org", "MS Office PM": "ymatitia@bnosyisroel.org", "MS LC": "ymatitia@bnosyisroel.org", "MS SUB": "ymatitia@bnosyisroel.org", "MS STAR": "ymatitia@bnosyisroel.org", "MS YEDID": "ymatitia@bnosyisroel.org", "hs": "mschachter@bnosyisroel.org", "HS Office": "mschachter@bnosyisroel.org", "HS Yedid": "mschachter@bnosyisroel.org", }
+  for (let i = 1; i < emailData.length; i++) {
+    let row = emailData[i];
+    console.log(row)
+    console.log(emailData[i + 1])
+    email = row[0]
+    title = row[1]
+    adminEmail = adminEmails[row[6]]
+    console.log(adminEmail)
+    name = String(row[3]);
+    date = new Date(row[4])
+    date = String(Utilities.formatDate(date, 'America/New_York', 'MM/dd/yyyy HH:mm:ss Z')).substring(0, 10);
+    issue = row[5];
+    try {
+      if ((String(row[0]) == String(emailData[i + 1][0])) && (String(row[1]) == String(emailData[i + 1][1])) && (String(row[2]) == String(emailData[i + 1][2])) && (String(row[3]) == String(emailData[i + 1][3])) && (String(row[4]) == String(emailData[i + 1][4])) && (String(row[5]) == String(emailData[i + 1][5]))) {
+        issue = ""
+      }
+
+    } catch (error) { }
+    console.log(issue)
+    if (issue == "out") {
+      text = "Hi " + title + " " + name + ", \nIt seems like you didn't clock OUT on " + date + ". \nWhat time did you leave school? \nPlease let me know as soon as possible. \nThank you!"
+      GmailApp.sendEmail(email, date + " Timeclock", text, {
+        name: "Bnos Yisroel",
+        //cc: adminEmail
+      });
+    }
+    if (issue == "in") {
+      text = "Hi " + title + " " + name + ", \nIt seems like you didn't clock IN on " + date + ". \nWhat time did you arrive at school? \nPlease let me know as soon as possible. \nThank you!"
+      GmailApp.sendEmail(email, date + " Timeclock", text, {
+        name: "Bnos Yisroel",
+        //cc: adminEmail
+      });
+    }
+    if (issue == "inout") {
+      text = "Hi " + title + " " + name + ", \nIt seems like you didn't clock IN or OUT on " + date + ". \nPlease let me know if you were absent or present. \nThank you!"
+      GmailApp.sendEmail(email, date + " Timeclock", text, {
+        name: "Bnos Yisroel",
+        //cc: adminEmail
+      });
+    }
+  }
+  emailSheet.getRange(2, 1, emailSheet.getLastRow() - 1, emailSheet.getLastColumn()).clearContent()
+
+}
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('html')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+};
