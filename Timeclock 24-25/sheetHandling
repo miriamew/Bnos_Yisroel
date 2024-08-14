@@ -1,0 +1,237 @@
+function copyDataToAnotherSheet() {
+  var spreadsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var sheetName = 'Teacher Schedules';
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  var scheduleSheet = spreadsheet.getSheetByName(sheetName);
+  var scheduledata = scheduleSheet.getDataRange().getValues();
+  var timeZone = Session.getScriptTimeZone();
+  Logger.log(timeZone);
+  var spreadsheetId = '1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY';
+  var source = SpreadsheetApp.openById(spreadsheetId);
+  var timezone2 = source.getSpreadsheetTimeZone();
+  Logger.log("SpreadsheetTimeZone: " + timezone2);
+  for (let i = 2; i < scheduledata.length; i++) {
+    try {
+      line = (scheduledata[i]);
+      spreadsheetId = line[59];
+      Logger.log(spreadsheetId);
+      sourceTab = source.getSheetByName(String(line[2]));
+      spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+      targetSheet = spreadsheet.getSheetByName(String(line[2]));
+      if (sourceTab && targetSheet) {
+        sourceData = sourceTab.getDataRange().getValues();
+
+        var sBG = sourceTab.getDataRange().getBackgrounds();
+        var sFC = sourceTab.getDataRange().getFontColors();
+        var sFF = sourceTab.getDataRange().getFontFamilies();
+        Logger.log(sourceData);
+        for (let k = 2; k < sourceData.length; k++) {
+          sourceData[k][13] = ""
+          Logger.log(sourceData[k][13])
+          Logger.log(sourceData[k][2]);
+          date = (sourceData[k][2]);
+          try {
+            var newDate = Utilities.formatDate(date, timeZone, "MM/dd/yyyy");
+            Logger.log(newDate);
+            (sourceData[k][2]) = newDate;
+          }
+          catch (error) {
+          }
+        }
+        targetSheet.clearContents()
+        targetSheet.getRange(1, 1, 30, 20).clearFormat().setBackground(null).setBorder(false, false, false, false, false, false);; // Clear existing data in the target sheet//
+
+
+        targetSheet.getRange(1, 1, sourceData.length, sourceData[1].length).setValues(sourceData).setFontFamily("Calibri").setHorizontalAlignment("left").setBackgrounds(sBG).setFontColors(sFC).setFontFamilies(sFF);//
+        targetSheet.getRange(1, 1, sourceData.length, 14).setBorder(true, true, true, true, true, true);
+        targetSheet.getRange(1, 16, 5, 3).setBorder(true, true, true, true, true, true);
+        targetSheet.getRange(1, 1, 1, 1).setHorizontalAlignment("center");//
+        targetSheet.getRange(1, 1, 2, sourceData[0].length).setFontWeight("bold").setHorizontalAlignment("center");
+
+        targetSheet.getRange(1, 1, 1, 14).mergeAcross().setBorder(true, true, true, true, false, false);
+        targetSheet.getRange(1, 16, 1, 3).mergeAcross().setBorder(true, true, true, true, false, false);
+        targetSheet.getRange(2, 14, 4, 3).setHorizontalAlignment("left");//
+        targetSheet.getRange(1, 14, 1, 1).setHorizontalAlignment("center");//
+        targetSheet.autoResizeColumn(12);//
+        targetSheet.autoResizeColumn(13);//
+        targetSheet.hideColumns(14);
+        targetSheet.autoResizeColumn(16);//
+        targetSheet.autoResizeColumn(1);//
+        if (targetSheet.getColumnWidth(12) < 100) {
+          targetSheet.setColumnWidth(12, 100);//
+        }
+        if (targetSheet.getColumnWidth(13) < 100) {
+          targetSheet.setColumnWidth(13, 100);//
+        }
+        targetSheet.setColumnWidth(1, 100);//
+        Logger.log("Data copied successfully from " + sourceTab.getName() + " to " + targetSheet);
+      } else {
+        if (sourceTab) {
+          Logger.log("target sheet not found.");
+        }
+        if (sourceTab) {
+          Logger.log("source sheet not found.");
+        }
+      }
+    }
+    catch (error) {
+    }
+  }
+}
+
+function fix() {
+  var spreadsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var sheetName = 'Teacher Schedules';
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  var scheduleSheet = spreadsheet.getSheetByName(sheetName);
+  var scheduleData = scheduleSheet.getDataRange().getValues();
+  var timeZone = Session.getScriptTimeZone();
+  Logger.log(timeZone);
+  var spreadsheetTimeZone = spreadsheet.getSpreadsheetTimeZone();
+  Logger.log("SpreadsheetTimeZone: " + spreadsheetTimeZone);
+
+  var sourceSpreadsheetId = '1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY';
+  var sourceSpreadsheet = SpreadsheetApp.openById(sourceSpreadsheetId);
+
+  for (let i = 2; i < scheduleData.length; i++) {
+    try {
+      var line = scheduleData[i];
+      var sourceTab = sourceSpreadsheet.getSheetByName(String(line[2]));
+      if (String(line[59]) == "") {
+        var spreadsheet = SpreadsheetApp.create(String(line[2]));
+        spreadsheet.getSheets()[0].setName(String(line[2]));
+        scheduleSheet.getRange(i + 1, 60).setValue(spreadsheet.getId());
+        var file = DriveApp.getFileById(spreadsheet.getId());
+        var folder = DriveApp.getFolderById("13cMqEtf7u2ez7jU8FJ4T-kNxdQjkbEw9");
+        folder.addFile(file);
+        DriveApp.getRootFolder().removeFile(file);
+
+      }
+      if (!sourceTab) {
+        sheetadd = sourceSpreadsheet.insertSheet(String(line[2]));
+
+        var cell = scheduleSheet.getRange(i + 1, 4);
+        console.log(cell.getValue())
+        var color = cell.getBackground();
+        console.log(color)
+
+        sheetadd.setTabColor(color);
+      }
+      if (sourceTab) {
+        var cell = scheduleSheet.getRange(i + 1, 4);
+        console.log(cell.getValue())
+        var color = cell.getBackground();
+        console.log(color)
+
+        sourceTab.setTabColor(color);
+      }
+
+
+      var range = sourceTab.getRange(1, 1, 100, 20);
+
+      // Clear formatting
+      range.clearFormat();
+
+      // Clear background color
+      range.setBackground(null);
+
+      // Clear borders
+      range.setBorder(false, false, false, false, false, false);
+
+      // Unmerge all cells
+      //var mergedRanges = sourceTab.getMergedRanges();
+      //mergedRanges.forEach(function(mergedRange) {
+      //  mergedRange.breakApart();
+      //});
+
+
+      if (sourceTab) {
+        var sourceData = [["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]]
+        if (line[3] == "es" || line[3] == "ps" || line[3] == "office") {
+          sourceData[2][17] = 0
+          if (line[5]) { sourceData[2][17] += (subtractTimes(line[6], line[5]) * 2 / 60) }
+          if (line[7]) { sourceData[2][17] += (subtractTimes(line[8], line[7]) * 2 / 60) }
+          if (line[9]) { sourceData[2][17] += (subtractTimes(line[10], line[9]) * 2 / 60) }
+          if (line[11]) { sourceData[2][17] += (subtractTimes(line[12], line[11]) * 2 / 60) }
+          if (line[13]) { sourceData[2][17] += (subtractTimes(line[14], line[13]) * 2 / 60) }
+
+          sourceData[2][17] = Math.round((sourceData[2][17]) * 100) / 100
+          sourceData[1][17] = "Hours";
+        }
+        else {
+          vacaperiods = 0
+          for (today = 1; today < 6; today++) {
+            cellnum = (5 + ((today - 1) * 12))
+            maxPeriods = (today < 5) ? 12 : 6;
+            for (period = 1; period < maxPeriods; period++) {
+
+              if (line[cellnum + period] != "") {
+                vacaperiods++
+              }
+
+            }
+          }
+          sourceData[2][17] = vacaperiods * 2;
+          sourceData[1][17] = "Periods";
+        }
+        sourceData[0][0] = "BNOS YISROEL EMPLOYEE TIMECLOCK REPORT 2024-2025 / 5785";
+        sourceData[0][15] = "ACCRUAL SUMMARY";
+        sourceData[1][15] = "Item";
+        sourceData[1][16] = "Minutes";
+        sourceData[1][0] = "Name";
+        sourceData[1][1] = "Keycard ID";
+        sourceData[1][2] = "Date";
+        sourceData[1][3] = "Division";
+        sourceData[1][4] = "Day";
+        sourceData[1][5] = "Arrival Time";
+        sourceData[1][6] = "Start Time";
+        sourceData[1][7] = "Departure Time";
+        sourceData[1][8] = "End Time";
+        sourceData[1][9] = "Minutes Late";
+        sourceData[1][10] = "Left Early";
+        sourceData[1][11] = "Absent";
+        sourceData[1][12] = "Notes";
+        sourceData[1][13] = "";
+        sourceData[2][15] = "Vacation Allocated";
+        sourceData[3][15] = "Minutes Used";
+        sourceData[4][15] = "Vacation Remaining";
+        sourceData[4][17] = "0";
+        sourceData[3][17] = "0";
+        sourceData[2][16] = "0";
+        sourceData[3][16] = "0";
+        sourceData[4][16] = "0";
+        console.log(sourceData)
+        sourceTab.clearContents();
+        sourceTab.getRange(1, 1, sourceData.length, sourceData[1].length).setValues(sourceData).setFontFamily("Calibri");
+        sourceTab.getRange(1, 1, 1, 15).breakApart();
+        sourceTab.getRange(1, 1, 2, sourceData[1].length - 4).setBackground("cyan");
+        sourceTab.getRange(1, 1, 2, sourceData[1].length).setFontWeight("bold").setHorizontalAlignment("center");
+        sourceTab.getRange(1, 1, 1, 14).mergeAcross().setBorder(true, true, true, true, false, false);
+        sourceTab.getRange(1, 16, 1, 3).mergeAcross().setBorder(true, true, true, true, false, false);
+        sourceTab.getRange(1, 1, sourceData.length, 14).setBorder(true, true, true, true, true, true);
+        sourceTab.getRange(1, 16, 5, 3).setBorder(true, true, true, true, true, true);
+        sourceTab.getRange(1, 16, 2, 3).setBackground("#00ff00");
+        sourceTab.autoResizeColumn(12);
+        sourceTab.autoResizeColumn(13);
+        sourceTab.autoResizeColumn(16);
+        sourceTab.setColumnWidth(1, 150);
+        if (sourceTab.getColumnWidth(12) < 100) {
+          sourceTab.setColumnWidth(12, 100);//
+        }
+        if (sourceTab.getColumnWidth(13) < 100) {
+          sourceTab.setColumnWidth(13, 100);//
+        }
+        Logger.log("Sheets all set up");
+      } else {
+
+        if (!sourceTab) {
+          Logger.log("Source sheet not found.");
+        }
+      }
+
+    }
+    catch (error) {
+
+    }
+  }
+}
