@@ -1,0 +1,324 @@
+function emailschedules() {
+  days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
+  allInfo = []
+  var spreadsheetId = '1jd1k3WE-6UjnJJCDdNp3OicLX2u1WcneixR8ZiHbrTo';
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  var scheduleSheet = spreadsheet.getSheetByName("MS");
+  var scheduledata = scheduleSheet.getDataRange().getValues();
+  var startDate = new Date("7/22/24");
+  var endDate = new Date("7/26/24");
+  for (let i = 2; i < scheduledata.length; i++) {
+    madechange = false;
+    line = (scheduledata[i]);
+    if (String(line[1]) != "" && String(line[1]) != "Last Name") {
+      personInfo = []
+      personInfo.push("\n" + line[0] + " " + line[1] + " teaches: \n")
+
+      date = ""
+      var startDate = new Date("7/22/24");
+      var endDate = new Date("7/26/24");
+      console.log(startDate)
+      for (today = startDate; today <= endDate; today.setDate(today.getDate() + 1)) {
+        savedrow = ["", "", "", "", "", "", "", ""]
+        savedrownumber = 0
+        savedperiod = 0
+        day = days[today.getDay()]
+
+        dayoff = false;
+        division = line[3]
+
+        cellnum = (line[3] == "ps" || line[3] == "es" || line[3] == "office") ? (5 + ((today.getDay() - 1) * 2)) : (5 + ((today.getDay() - 1) * 12))
+        if (String(line[cellnum]) != "") {
+          personInfo.push("\n" + day)
+          absent = 0;
+          maxPeriods = (today.getDay() < 5) ? 12 : 6;
+          for (period = 1; period < maxPeriods; period++) {
+            if (division == "ps" || division == "es" || division == "office") {
+              period = 0;
+              maxPeriods = 0;
+            }
+            taught = false
+            flag = false
+            if (line[cellnum + period] != "") {
+              shouldend = (line[3] == "ps" || line[3] == "es" || division == "office") ? (line[cellnum + 1]) : getPeriodEnd(line[3], today.getDay(), period)
+              shouldstart = (line[3] == "ps" || line[3] == "es" || division == "office") ? (line[cellnum]) : getPeriodStart(line[3], today.getDay(), period)
+              periodtoadd = period
+              if (period == 2) { periodtoadd = "Tefillah" }
+              else if (periodtoadd == 6) { periodtoadd = "Lunch" }
+              else if (periodtoadd >= 6) { periodtoadd = periodtoadd - 2 }
+              else if (periodtoadd >= 3) { periodtoadd = periodtoadd - 1 }
+              personInfo.push(" " + periodtoadd)
+              console.log(personInfo)
+            }
+          }
+        }
+      }
+      allInfo.push([personInfo])
+    }
+  }
+  console.log(allInfo)
+  text = ""
+  for (i = 0; i < allInfo.length; i++) {
+    text += "\n" + allInfo[i]
+  }
+  MailApp.sendEmail("miriamwetstein@gmail.com", " Timeclock", text);
+}
+function createTrigger() {
+  PropertiesService.getScriptProperties().setProperty('shouldRun', "T");
+  var allTriggers = ScriptApp.getProjectTriggers();
+  //console.log(allTriggers.length)
+  if (allTriggers.length == 0) {
+    ScriptApp.newTrigger('timeclocks')
+      .timeBased()
+      .everyMinutes(10)
+      .create();
+  }
+}
+
+function deleteAllTriggers() {
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    ScriptApp.deleteTrigger(allTriggers[i]);
+  }
+}
+var infospreadsheet = SpreadsheetApp.openById('11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA');
+var timeclockSheet = infospreadsheet.getSheetByName("Icon");
+var scheduleSheet = infospreadsheet.getSheetByName("Teacher Schedules");
+var emailSheet = infospreadsheet.getSheetByName("Email List");
+var formsheet = infospreadsheet.getSheetByName("Form Responses");
+formsheetdata = formsheet.getDataRange().getValues()
+function timeclocks() {
+  let first = new Date();
+  days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
+  let start = first.getTime();
+
+  var scheduledata = scheduleSheet.getDataRange().getValues();
+  var timeclockdata = timeclockSheet.getDataRange().getValues();
+  var spreadsheet = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  var retrievedNumber = PropertiesService.getScriptProperties().getProperty('storedNumber');
+  var keeprunning = PropertiesService.getScriptProperties().getProperty('shouldRun');
+  if (keeprunning == "F") { return }
+  var startDate = new Date(timeclockdata[0][0]);
+  var endDate = new Date(timeclockdata[0][1]);
+  for (let i = Math.floor(retrievedNumber); i < scheduledata.length; i++) {
+    madechange = false;
+    line = (scheduledata[i]);
+    if (String(line[1]) != "" && String(line[1]) != "Last Name") {
+      console.log(line[1])
+      let d = new Date();
+      let time = d.getTime();
+      if (time - start >= 300000) {
+        PropertiesService.getScriptProperties().setProperty('storedNumber', i);
+        PropertiesService.getScriptProperties().setProperty('shouldRun', "T");
+        Logger.log("Up to " + String(line[2]));
+        return
+      }
+      if (i == scheduledata.length - 1) {
+        PropertiesService.getScriptProperties().setProperty('storedNumber', 1);
+        PropertiesService.getScriptProperties().setProperty('shouldRun', "F");
+        deleteAllTriggers();
+      }
+      Logger.log(i);
+      date = ""
+
+      var sheetName = String(line[2]);
+      var personsheet = spreadsheet.getSheetByName(sheetName);
+      vaca = personsheet.getRange(3, 18, 1, 1).getValue()
+      if (personsheet.getLastRow() == 5) {
+        personsheet.getRange(3, 16, 3, 3).clearContent()
+      }
+      var startDate = new Date(timeclockdata[0][0]);
+      var endDate = new Date(timeclockdata[0][1]);
+      console.log(startDate)
+      for (today = startDate; today <= endDate; today.setDate(today.getDate() + 1)) {
+        savedrow = ["", "", "", "", "", "", "", ""]
+        savedrownumber = 0
+        savedperiod = 0
+        day = days[today.getDay()]
+        console.log(day)
+        dayoff = false;
+        division = line[3]
+        divisionForEmail = (line[3] == "office") ? line[4] : line[3]
+        cellnum = (line[3] == "ps" || line[3] == "es" || line[3] == "office") ? (5 + ((today.getDay() - 1) * 2)) : (5 + ((today.getDay() - 1) * 12))
+        if (String(line[cellnum]) != "") {
+          absent = 0;
+          maxPeriods = (today.getDay() < 5) ? 12 : 6;
+          for (period = 1; period < maxPeriods; period++) {
+            if (division == "ps" || division == "es" || division == "office") {
+              period = 0;
+              maxPeriods = 0;
+            }
+            taught = false
+            flag = false
+            if (line[cellnum + period] != "") {
+              shouldend = (line[3] == "ps" || line[3] == "es" || division == "office") ? (line[cellnum + 1]) : getPeriodEnd(line[3], today.getDay(), period)
+              shouldstart = (line[3] == "ps" || line[3] == "es" || division == "office") ? (line[cellnum]) : getPeriodStart(line[3], today.getDay(), period)
+              adminInfo = getAdminInfo(division, today, period)
+              console.log(adminInfo)
+              if (adminInfo[1] != "") {
+                shouldstart = diffschedule("late", adminInfo[0], shouldstart)
+                shouldend = diffschedule("early", adminInfo[1], shouldend)
+              }
+              console.log(shouldend)
+              console.log(shouldstart)
+
+              shouldstart, shouldend = calendarChange(shouldstart, shouldend, today, division)
+
+              absent = subtractTimes(shouldend, shouldstart);
+              if ((String(line[2]) == "62043" || String(line[2]) == "63052" || String(line[2]) == "63043") && shouldend == "03:45p") {
+                absent = absent + 15;
+              }
+              for (let k = 1; k < timeclockdata.length; k++) {
+                row = (timeclockdata[k]);
+                currentDate = new Date(row[3])
+                if (String(line[2]) === String(row[2]) && String(currentDate) === String(today)) {
+                  console.log("found the day")
+
+                  inTime = (row[5]);
+                  outTime = (row[7]);
+                  console.log(inTime)
+                  console.log(outTime)
+                  mincamelate = (calculateTimes(inTime, shouldstart, division));
+                  minleftearly = (calculateTimes(shouldend, outTime, division));
+                  formresult = getFormInfo(line[1] + " " + line[0], today, "Normal")
+                  if (formresult[2] != "") {
+                    newmonth(today, personsheet);
+                    personsheet.appendRow([row[0], row[2], row[3], line[4], day, formresult[0], shouldstart, formresult[1], shouldend, "", "", calculateTimes(formresult[1], formresult[0], division), formresult[2], "Form - left in the middle of the day"]);
+                  }
+
+                  if (adminInfo[0] == "Off") {
+                    mincamelate = 0;
+                    minleftearly = 0
+                  }
+                  if ((subtractTimes(inTime, shouldend) <= 0) && (subtractTimes(outTime, shouldstart) >= 0)) {
+                    taught = true
+                    if ((mincamelate > 0) || (minleftearly > 0)) {
+                      flag = true;//came late or left early
+                    }
+                    if (String(row[4]) !== String(row[6])) {
+                      if (checkSame(savedrow, row, savedperiod, period) == "Same") {
+                        personsheet.getRange(savedrownumber, 9).setValue(inTime)
+                        personsheet.getRange(savedrownumber, 13).setValue("Left in the middle of the day")
+                        personsheet.getRange(savedrownumber, 11).setValue(calculateTimes(inTime, personsheet.getRange(savedrownumber, 8).getValue(), division))
+                        shouldstart = inTime;
+                        mincamelate = 0;
+                      }
+
+                      flag = false
+                      newmonth(today, personsheet);
+                      madechange = true;
+                      formresult = getFormInfo(line[1] + " " + line[0], today, "Didn't clock OUT")
+                      if (formresult[2] != "") {
+
+                        personsheet.appendRow([row[0], row[2], row[3], line[4], day, row[5], shouldstart, formresult[1], shouldend, mincamelate, calculateTimes(shouldend, formresult[1], division), "", formresult[2], "Form - out punch"]);
+                      } else {
+                        personsheet.appendRow([line[1] + " " + line[0], line[2], row[3], line[4], day, row[5], shouldstart, "X", shouldend, mincamelate, "", "", "Didn't clock OUT"]);
+                        emailSheet.appendRow([line[60], line[61], line[1], line[0], today, "out", divisionForEmail]);
+                      }
+                    }
+                    if (flag) {
+                      if (checkSame(savedrow, row, savedperiod, period) == "Same") {
+                        personsheet.getRange(savedrownumber, 9).setValue(inTime)
+                        personsheet.getRange(savedrownumber, 13).setValue("Left in the middle of the day")
+                        personsheet.getRange(savedrownumber, 11).setValue(calculateTimes(inTime, personsheet.getRange(savedrownumber, 8).getValue(), division))
+                        shouldstart = inTime;
+                        mincamelate = 0;
+                      }
+
+                      if (inTime == outTime || subtractTimes(outTime, inTime) == 1) {
+                        newmonth(today, personsheet);
+                        formresult = getFormInfo(line[1] + " " + line[0], today, "Didn't clock IN")
+                        if (formresult[2] != "") {
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, formresult[0], shouldstart, row[7], shouldend, calculateTimes(formresult[0], shouldstart, division), "", "", formresult[2], "Form - in punch"]);
+                        } else {
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, "X", shouldstart, row[7], shouldend, "", minleftearly, "", "Didn't clock IN"]);
+                          emailSheet.appendRow([line[60], line[61], line[1], line[0], today, "in", divisionForEmail]);
+                        }
+                        madechange = true;
+                      }
+                      else {
+                        newmonth(today, personsheet);
+                        madechange = true;
+                        personsheet.appendRow([row[0], row[2], row[3], line[4], day, row[5], shouldstart, row[7], shouldend, mincamelate, minleftearly, "", ""]);
+                        formresult = getFormInfo(line[1] + " " + line[0], today, "Present")
+                        console.log(formresult)
+                        if (formresult[1] != "") {
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, "", shouldstart, formresult[1], shouldend, "", "", "", formresult[2], "Form - out punch"]);
+                        }
+                        if (formresult[0] != "") {
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, formresult[0], shouldstart, "", shouldend, "", "", "", formresult[2], "Form - in punch"]);
+                        }
+                      }
+                      savedrow = row;
+                      savedrownumber = personsheet.getLastRow()
+                      savedperiod = period
+                    }
+                  }
+
+                }
+              }
+
+              dayoff = changeInCalendar(today)
+              if (taught === false && dayoff === false) {
+                newmonth(today, personsheet);
+                madechange = true;
+                formresult = getFormInfo(line[1] + " " + line[0], today, "Absent")
+                if (formresult[0] != "") {
+                  personsheet.appendRow([line[1] + " " + line[0], line[2], today, line[4], day, formresult[0], shouldstart, formresult[1], shouldend, calculateTimes(formresult[0], shouldstart, division), calculateTimes(shouldend, formresult[1], division), "", formresult[2], "Form - both punches"]);
+                } else {
+                  personsheet.appendRow([line[1] + " " + line[0], line[2], today, line[4], day, "X", shouldstart, "X", shouldend, "", "", absent, formresult[2]]);
+                  emailSheet.appendRow([line[60], line[61], line[1], line[0], today, "inout", divisionForEmail]);
+                }
+              }
+            }
+          }
+        }
+
+
+
+
+      }
+
+      if ((line[3] == "ps" || line[3] == "es" || line[3] == "office")) {
+
+        personsheet.getRange("R2").setValue("Hours")
+        personsheet.getRange("R4").setFormula("=ROUND((SUM(J3:L1000)/60),2)");
+        personsheet.getRange("Q3").setFormula("=R3*60")
+
+
+      }
+      else {
+        personsheet.getRange("R2").setValue("Periods")
+        personsheet.getRange("R4").setFormula("=ROUND((SUM(J3:L1000)/42),2)");
+        personsheet.getRange("Q3").setFormula("=R3*42")
+      }
+      personsheet.getRange("P3").setValue("Vacation Allocated")
+      personsheet.getRange("P4").setValue("Minutes Used")
+      personsheet.getRange("P5").setValue("Vacation Remaining")
+      personsheet.getRange("R3").setValue(vaca)
+      personsheet.getRange("Q4").setFormula("=SUM(J3:L1000)");
+
+      personsheet.getRange("Q5").setFormula("=MINUS(Q3,Q4)");
+      personsheet.getRange("R5").setFormula("=MINUS(R3,R4)");
+      if (madechange === true) {
+        personsheet.getRange(3, 1, personsheet.getLastRow() - 2, 14).setBorder(true, true, true, true, true, true).setFontFamily("Calibri").setHorizontalAlignment("left");
+        personsheet.autoResizeColumn(12);
+        personsheet.autoResizeColumn(13);
+        personsheet.autoResizeColumn(14);
+        if (personsheet.getColumnWidth(12) < 100) {
+          personsheet.setColumnWidth(12, 100);
+        }
+        if (personsheet.getColumnWidth(13) < 100) {
+          personsheet.setColumnWidth(13, 100);
+        }
+        if (personsheet.getColumnWidth(1) < 120) {
+          personsheet.setColumnWidth(1, 120);
+        }
+      }
+    }
+  }
+  //copyDataToAnotherSheet()
+  //sendEmails()
+  //clearSubSheet()
+
+}
