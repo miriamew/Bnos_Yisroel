@@ -78,10 +78,22 @@ function createTrigger() {
 function deleteAllTriggers() {
   var allTriggers = ScriptApp.getProjectTriggers();
   for (var i = 0; i < allTriggers.length; i++) {
-    ScriptApp.deleteTrigger(allTriggers[i]);
+    if ((allTriggers[i].getHandlerFunction()) == "timeclocks") {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+
+    }
   }
+  //clearSubSheet()
+  ScriptApp.newTrigger('copyDataToAnotherSheet')
+    .timeBased()
+    .everyMinutes(10)
+    .create();
+  ScriptApp.newTrigger('sendEmails')
+    .timeBased()
+    .everyMinutes(10)
+    .create();
 }
-var infospreadsheet = SpreadsheetApp.openById('11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA');
+var infospreadsheet = SpreadsheetApp.openById('1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs');
 var timeclockSheet = infospreadsheet.getSheetByName("Icon");
 var scheduleSheet = infospreadsheet.getSheetByName("Teacher Schedules");
 var emailSheet = infospreadsheet.getSheetByName("Email List");
@@ -94,7 +106,7 @@ function timeclocks() {
 
   var scheduledata = scheduleSheet.getDataRange().getValues();
   var timeclockdata = timeclockSheet.getDataRange().getValues();
-  var spreadsheet = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  var spreadsheet = SpreadsheetApp.openById('1Pw2keUToQdIxZ252A9Nkactnm-Tf5M6a3MtYpS0uIs0');
   var retrievedNumber = PropertiesService.getScriptProperties().getProperty('storedNumber');
   var keeprunning = PropertiesService.getScriptProperties().getProperty('shouldRun');
   if (keeprunning == "F") { return }
@@ -116,6 +128,7 @@ function timeclocks() {
       if (i == scheduledata.length - 1) {
         PropertiesService.getScriptProperties().setProperty('storedNumber', 1);
         PropertiesService.getScriptProperties().setProperty('shouldRun', "F");
+
         deleteAllTriggers();
       }
       Logger.log(i);
@@ -165,7 +178,7 @@ function timeclocks() {
               shouldstart, shouldend = calendarChange(shouldstart, shouldend, today, division)
 
               absent = subtractTimes(shouldend, shouldstart);
-              if ((String(line[2]) == "62043" || String(line[2]) == "63052" || String(line[2]) == "63043") && shouldend == "03:45p") {
+              if ((String(line[2]) == "62043" || String(line[2]) == "63052" || String(line[2]) == "63043" || String(line[2]) == "30043") && shouldend == "03:45p") {
                 absent = absent + 15;
               }
               for (let k = 1; k < timeclockdata.length; k++) {
@@ -190,7 +203,7 @@ function timeclocks() {
                     mincamelate = 0;
                     minleftearly = 0
                   }
-                  if ((subtractTimes(inTime, shouldend) <= 0) && (subtractTimes(outTime, shouldstart) >= 0)) {
+                  if ((subtractTimes(inTime, shouldend) <= 0) && (subtractTimes(outTime, shouldstart) >= 0) || (String(row[4]) !== String(row[6])) || (inTime == outTime || subtractTimes(outTime, inTime) == 1)) {
                     taught = true
                     if ((mincamelate > 0) || (minleftearly > 0)) {
                       flag = true;//came late or left early
@@ -243,10 +256,10 @@ function timeclocks() {
                         formresult = getFormInfo(line[1] + " " + line[0], today, "Present")
                         console.log(formresult)
                         if (formresult[1] != "") {
-                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, "", shouldstart, formresult[1], shouldend, "", "", "", formresult[2], "Form - out punch"]);
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, row[5], shouldstart, formresult[1], shouldend, "", "", "", formresult[2], "Form - out punch"]);
                         }
                         if (formresult[0] != "") {
-                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, formresult[0], shouldstart, "", shouldend, "", "", "", formresult[2], "Form - in punch"]);
+                          personsheet.appendRow([row[0], row[2], row[3], line[4], day, formresult[0], shouldstart, row[7], shouldend, "", "", "", formresult[2], "Form - in punch"]);
                         }
                       }
                       savedrow = row;
@@ -317,8 +330,6 @@ function timeclocks() {
       }
     }
   }
-  //copyDataToAnotherSheet()
-  //sendEmails()
-  //clearSubSheet()
+
 
 }
