@@ -243,7 +243,7 @@ function triggerPayroll() {
     payroll((new Date(today.getFullYear(), today.getMonth() + 1, 0)))
     console.log("test")
   }
-  else if (parseInt(today.getDate()) == 8) {
+  else if (parseInt(today.getDate()) == 10) {
     console.log("test")
     payroll((new Date(today.getFullYear(), today.getMonth(), 15)))
   }
@@ -301,8 +301,9 @@ function payroll(date) {
               todelete = -1
             }
           }
-          if (type == "Hour") {
+          if (type == "Hour" || type == "Vacation") {
             hours = parseFloat(sheet.getRange(i + 1, sheet.getLastColumn() - 1).getValue()) / rate
+            hours = Math.round((hours) * 100) / 100
             time = time + hours
             //numWithZeroes = num.toFixed(Math.max(((num+'').split(".")[1]||"").length, 2));
             newsheet.appendRow([(line[0]), answers[3], job, dept, String(parseFloat(hours)), "$" + String(parseFloat(rate)), "$" + String(parseFloat(answers[answers.length - 1]))])
@@ -361,7 +362,7 @@ function formatSheets() {
     }
     console.log(String(rateSheetData[i][5]))
     console.log(String(rateSheetData[i][0]))
-    if (String(rateSheetData[i][5]) == "" && String(rateSheetData[i][0]) != String(rateSheetData[i - 1][0])) {
+    if ((String(rateSheetData[i][5]) == "" || (String(rateSheetData[i][5]) == "undefined")) && String(rateSheetData[i][0]) != String(rateSheetData[i - 1][0])) {
       var spreadsheet2 = SpreadsheetApp.create(String(rateSheetData[i][0]));
       rateSheet.getRange(i + 1, 6).setValue(spreadsheet2.getId());
       var file = DriveApp.getFileById(spreadsheet2.getId());
@@ -387,7 +388,7 @@ function formatSheets() {
       sourceTab.getRange(1, 1, 1, 9).setHorizontalAlignment("center").setFontWeight("bold").setBackground("cyan")
 
     }
-    if (String(rateSheetData[i][5]) != "") {
+    if (String(rateSheetData[i][5]) != "" && String(rateSheetData[i][5]) != "undefined") {
       var targetSheet = SpreadsheetApp.openById(rateSheetData[i][5]);
 
       var targetSheet = targetSheet.getSheetByName('Sheet1');
