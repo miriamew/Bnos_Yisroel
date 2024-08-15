@@ -1,5 +1,13 @@
 function sendEmails() {
-  var emailsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    if ((allTriggers[i].getHandlerFunction()) == "sendEmails") {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+
+    }
+  }
+
+  var emailsheetId = '1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs';
   var emailsheetName = 'Email List';
   var emailspreadsheet = SpreadsheetApp.openById(emailsheetId);
   var emailSheet = emailspreadsheet.getSheetByName(emailsheetName);
