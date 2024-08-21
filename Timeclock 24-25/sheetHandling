@@ -1,12 +1,12 @@
 function copyDataToAnotherSheet() {
-  var spreadsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var spreadsheetId = '-';
   var sheetName = 'Teacher Schedules';
   var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
   var scheduleSheet = spreadsheet.getSheetByName(sheetName);
   var scheduledata = scheduleSheet.getDataRange().getValues();
   var timeZone = Session.getScriptTimeZone();
   Logger.log(timeZone);
-  var spreadsheetId = '1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY';
+  var spreadsheetId = '';
   var source = SpreadsheetApp.openById(spreadsheetId);
   var timezone2 = source.getSpreadsheetTimeZone();
   Logger.log("SpreadsheetTimeZone: " + timezone2);
@@ -80,7 +80,7 @@ function copyDataToAnotherSheet() {
 }
 
 function fix() {
-  var spreadsheetId = '11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA';
+  var spreadsheetId = '-';
   var sheetName = 'Teacher Schedules';
   var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
   var scheduleSheet = spreadsheet.getSheetByName(sheetName);
@@ -90,7 +90,7 @@ function fix() {
   var spreadsheetTimeZone = spreadsheet.getSpreadsheetTimeZone();
   Logger.log("SpreadsheetTimeZone: " + spreadsheetTimeZone);
 
-  var sourceSpreadsheetId = '1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY';
+  var sourceSpreadsheetId = '';
   var sourceSpreadsheet = SpreadsheetApp.openById(sourceSpreadsheetId);
 
   for (let i = 2; i < scheduleData.length; i++) {
@@ -102,7 +102,7 @@ function fix() {
         spreadsheet.getSheets()[0].setName(String(line[2]));
         scheduleSheet.getRange(i + 1, 60).setValue(spreadsheet.getId());
         var file = DriveApp.getFileById(spreadsheet.getId());
-        var folder = DriveApp.getFolderById("13cMqEtf7u2ez7jU8FJ4T-kNxdQjkbEw9");
+        var folder = DriveApp.getFolderById("-");
         folder.addFile(file);
         DriveApp.getRootFolder().removeFile(file);
 
