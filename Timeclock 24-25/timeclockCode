@@ -1,7 +1,7 @@
 function emailschedules() {
   days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
   allInfo = []
-  var spreadsheetId = '1jd1k3WE-6UjnJJCDdNp3OicLX2u1WcneixR8ZiHbrTo';
+  var spreadsheetId = '-';
   var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
   var scheduleSheet = spreadsheet.getSheetByName("MS");
   var scheduledata = scheduleSheet.getDataRange().getValues();
@@ -93,7 +93,7 @@ function deleteAllTriggers() {
     .everyMinutes(10)
     .create();
 }
-var infospreadsheet = SpreadsheetApp.openById('1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs');
+var infospreadsheet = SpreadsheetApp.openById('-');
 var timeclockSheet = infospreadsheet.getSheetByName("Icon");
 var scheduleSheet = infospreadsheet.getSheetByName("Teacher Schedules");
 var emailSheet = infospreadsheet.getSheetByName("Email List");
@@ -106,7 +106,7 @@ function timeclocks() {
 
   var scheduledata = scheduleSheet.getDataRange().getValues();
   var timeclockdata = timeclockSheet.getDataRange().getValues();
-  var spreadsheet = SpreadsheetApp.openById('1Pw2keUToQdIxZ252A9Nkactnm-Tf5M6a3MtYpS0uIs0');
+  var spreadsheet = SpreadsheetApp.openById('-');
   var retrievedNumber = PropertiesService.getScriptProperties().getProperty('storedNumber');
   var keeprunning = PropertiesService.getScriptProperties().getProperty('shouldRun');
   if (keeprunning == "F") { return }
