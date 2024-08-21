@@ -34,8 +34,8 @@ function payrollDate() {
   }
 }
 function timeclocks() {
-  var spreadsheet = SpreadsheetApp.openById('1WEWOb-EMuXSkf-vrpeIIM1zp1fNBszQxp0MBgdlSJtc');
-  var spreadsheet2 = SpreadsheetApp.openById('1effVJ2Muhy18yKkznOzxwfSPAk8KUhuMWdwncdvUrk4')
+  var spreadsheet = SpreadsheetApp.openById('--');
+  var spreadsheet2 = SpreadsheetApp.openById('')
   var timeclockSheet = spreadsheet.getSheetByName('Newest Icon');
   var scheduleSheet = spreadsheet.getSheetByName('Employees');
   var current = spreadsheet.getSheetByName('Current');
@@ -148,8 +148,8 @@ function timeclocks() {
 }
 
 function formatSheets() {
-  var spreadsheet = SpreadsheetApp.openById('1WEWOb-EMuXSkf-vrpeIIM1zp1fNBszQxp0MBgdlSJtc');
-  var spreadsheet2 = SpreadsheetApp.openById('1effVJ2Muhy18yKkznOzxwfSPAk8KUhuMWdwncdvUrk4')
+  var spreadsheet = SpreadsheetApp.openById('--');
+  var spreadsheet2 = SpreadsheetApp.openById('')
   var scheduleSheet = spreadsheet.getSheetByName('Employees');
   var scheduledata = scheduleSheet.getDataRange().getValues();
   header = [["Name", "ID", "Date", "Day In", "Time In", "Day Out", "Time Out", "Total Minutes", "Total Hours"]]
