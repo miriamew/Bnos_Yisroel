@@ -2,7 +2,7 @@ from pip._vendor import requests
 import os
 import csv
 import time
-os.chdir(r"c:\Users\miria\Downloads")
+os.chdir(r"c:\Downloads")
 #Dealing with CSV file called PopuliDonations
 f = open('BloomerangExport.csv', 'r')
 reader = csv.reader(f)
