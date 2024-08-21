@@ -1,5 +1,5 @@
 function sortTabsByColorAndNumber() {
-  var ss = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  var ss = SpreadsheetApp.openById('');
   var sheets = ss.getSheets();
 
   // Function to get the RGB color of a tab
@@ -42,11 +42,11 @@ function sortTabsByColorAndNumber() {
 function copyOfMasterSheet() {
   var scriptProperties = PropertiesService.getScriptProperties();
   var previousSpreadsheetId = scriptProperties.getProperty('lastSpreadsheetId');
-  var ss = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  var ss = SpreadsheetApp.openById('');
 
-  var targetFolder = DriveApp.getFolderById('1Zoccz27QT0QUmPTGiyMUOJi_HG6H6qse');
+  var targetFolder = DriveApp.getFolderById('');
 
-  var newFile = DriveApp.getFileById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY').makeCopy("One Week Behind - " + ss.getName(), targetFolder);
+  var newFile = DriveApp.getFileById('').makeCopy("One Week Behind - " + ss.getName(), targetFolder);
 
   // Get the ID of the new spreadsheet
   var newSpreadsheetId = newFile.getId();
