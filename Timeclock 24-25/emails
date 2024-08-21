@@ -7,12 +7,12 @@ function sendEmails() {
     }
   }
 
-  var emailsheetId = '1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs';
+  var emailsheetId = '-';
   var emailsheetName = 'Email List';
   var emailspreadsheet = SpreadsheetApp.openById(emailsheetId);
   var emailSheet = emailspreadsheet.getSheetByName(emailsheetName);
   emailData = emailSheet.getDataRange().getValues();
-  adminEmails = { "ps": "preschool@bnosyisroel.org", "es": "rvictor@bnosyisroel.org", "ms": "ymatitia@bnosyisroel.org", "MS Office AM": "ymatitia@bnosyisroel.org", "MS Office PM": "ymatitia@bnosyisroel.org", "MS LC": "ymatitia@bnosyisroel.org", "MS SUB": "ymatitia@bnosyisroel.org", "MS STAR": "ymatitia@bnosyisroel.org", "MS YEDID": "ymatitia@bnosyisroel.org", "hs": "mschachter@bnosyisroel.org", "HS Office": "mschachter@bnosyisroel.org", "HS Yedid": "mschachter@bnosyisroel.org", }
+  adminEmails = { "ps": "g", "es": "", "ms": "g", "MS Office AM": "rg", "MS Office PM": "ymorg", "MS LC": "rg", "MS SUB": ".org", "MS STAR": "yl.org", "MS YEDID": "@.org", "hs": "@.org", "HS Office": "@.org", "HS Yedid": "@.org", }
   for (let i = 1; i < emailData.length; i++) {
     let row = emailData[i];
     console.log(row)
