@@ -1,9 +1,9 @@
 function vacationEmail() {
-  var spreadsheet = SpreadsheetApp.openById('11m6vk3Gut0I3q8sr-qPraTiWLz2GBfbeDBg6YwjIBRA');
+  var spreadsheet = SpreadsheetApp.openById('-');
   var vacaSheet = spreadsheet.getSheetByName('Over-Allocated Time');
 
   var scheduledata = vacaSheet.getDataRange().getValues();
-  var masterspreadsheet = SpreadsheetApp.openById('1l1igcfhTizVKD8BrO2BSvvsC_BBUwGzWZJ1L8NkwsEY');
+  var masterspreadsheet = SpreadsheetApp.openById('');
   body = "<p>The following people have gone over their allocated vacation time:</p><br />"
   for (let i = 1; i < scheduledata.length; i++) {
     Logger.log(i);
