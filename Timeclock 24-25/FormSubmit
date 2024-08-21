@@ -26,10 +26,10 @@ function onFormSubmit(e) {
   console.log(submissionDate.valueOf())
   console.log(lastDate.valueOf())
   if (submissionDate.valueOf() <= lastDate.valueOf()) {
-    var infospreadsheet = SpreadsheetApp.openById('1RCblpCScnpFU5Uj3tCr9mccRH06-FJQ9rHr9S4RASvs');
+    var infospreadsheet = SpreadsheetApp.openById('-');
     var scheduleSheet = infospreadsheet.getSheetByName("Teacher Schedules");
     var scheduledata = scheduleSheet.getDataRange().getValues();
-    var spreadsheet = SpreadsheetApp.openById('1Pw2keUToQdIxZ252A9Nkactnm-Tf5M6a3MtYpS0uIs0');
+    var spreadsheet = SpreadsheetApp.openById('-');
     for (i = 1; i < 10; i++) {//scheduledata.length
       iconId = scheduledata[i][2]
       if (values[3] == scheduledata[i][1] + " " + scheduledata[i][0]) {
