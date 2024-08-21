@@ -28,7 +28,7 @@ function formatTime(time) {
 
 function emails() {
   rightnow = new Date();
-  var spreadsheet = SpreadsheetApp.openById('1rhBuITb0CwJ_0dPj1SdhQu90JsmOb4V_2wsKvXJPhiU');
+  var spreadsheet = SpreadsheetApp.openById('');
   var emailsheet = spreadsheet.getSheetByName('Emails');
   emaildata = emailsheet.getDataRange().getValues();
   time = (String(rightnow.getHours()));
@@ -51,8 +51,8 @@ function emails() {
       if (teaches[0][0] == true && taught[0][0] == false) {
         Utilities.sleep(2000)
         console.log("sending")
-        GmailApp.sendEmail(email[0][0], "Bnos Yisroel Payroll", "", {
-          name: "Bnos Yisroel",
+        GmailApp.sendEmail(email[0][0], "Payroll", "", {
+          name: "",
           htmlBody: `<p>Our records indicate that you have job(s) that require you to report your hours/periods worked today.
 If you are receiving this email, we do not have a record of you submitting the form for today. Please submit the <a href=https://docs.google.com/forms/d/e/1FAIpQLSdnmYmN39J4BGt7SxlZGY0Kjtcu9Bt_dodAMezxYzGnIivTWw/viewform>PAYROLL FORM.</a> Thank you!<br /></p>`
         });
@@ -62,8 +62,8 @@ If you are receiving this email, we do not have a record of you submitting the f
 }
 
 function onFormSubmit(e) {
-  var spreadsheet = SpreadsheetApp.openById('1rhBuITb0CwJ_0dPj1SdhQu90JsmOb4V_2wsKvXJPhiU');
-  var form = FormApp.openById('1nQfaAIQ75yV-qjbxdGHjlYYLl5lFOtKJpcRANIl_FPk');
+  var spreadsheet = SpreadsheetApp.openById('');
+  var form = FormApp.openById('-');
   var responses = e.values;
   var sheet = spreadsheet.getSheetByName('Form Responses 1');
   var rateSheet = spreadsheet.getSheetByName('Rates');
@@ -222,7 +222,7 @@ function onFormSubmit(e) {
         GmailApp.sendEmail(email, "Bnos Yisroel Payroll", "", {
           name: "Bnos Yisroel",
           htmlBody: body,
-          //bcc: "aheyman@bnosyisroel.org,cdresdner@bnosyisroel.org"
+          //bcc: ""
         });
         // Append the result to the current row in a specific column (adjust column index)
 
@@ -250,7 +250,7 @@ function triggerPayroll() {
 }
 function payroll(date) {
   today = Utilities.formatDate(date, 'America/New_York', 'MM/dd/yyyy');
-  var spreadsheet = SpreadsheetApp.openById('1rhBuITb0CwJ_0dPj1SdhQu90JsmOb4V_2wsKvXJPhiU');
+  var spreadsheet = SpreadsheetApp.openById('');
   var sheet = spreadsheet.getSheetByName('Form Responses 1');
   var rateSheet = spreadsheet.getSheetByName('Rates');
   sheetdata = sheet.getDataRange().getValues()
@@ -348,7 +348,7 @@ function payroll(date) {
 }
 
 function formatSheets() {
-  var spreadsheetId = '1rhBuITb0CwJ_0dPj1SdhQu90JsmOb4V_2wsKvXJPhiU';
+  var spreadsheetId = '';
   var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
   // Get the submitted responses
   var rateSheet = spreadsheet.getSheetByName('Rates');
