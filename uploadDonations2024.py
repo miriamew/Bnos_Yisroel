@@ -1,8 +1,7 @@
 from pip._vendor import requests
 import os
 import csv
-os.chdir(r"c:\Users\miria\Downloads")
-'''#Dealing with CSV file called PopuliDonations
+os.chdir(r"c:\Downloads")
 f = open('BloomerangExport.csv', 'r')
 reader = csv.reader(f)
 mylist = list(reader)
