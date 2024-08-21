@@ -1,7 +1,7 @@
 
 function importXlsxFromEmail2() {
   const emailLabelName = "bloomerang"; // Change this to your label name
-  const targetFolderId = "1wm2YYavLugH6MlOpB9tAwlEvWdDNDv-Y"; // Replace with your target folder ID
+  const targetFolderId = "-Y"; // Replace with your target folder ID
   const emailLabel = GmailApp.getUserLabelByName(emailLabelName);
   if (!emailLabel) {
     Logger.log(`Label "${emailLabelName}" not found.`);
@@ -35,10 +35,10 @@ function importXlsxFromEmail2() {
   }
 }
 function updateBloomerangInfo(){
-  var spreadsheet = SpreadsheetApp.openById("1uNr5GlXqjI4SCKgVveBpS45z1L4P9HYhFeHX32DvN4M");
+  var spreadsheet = SpreadsheetApp.openById("");
   var reportSheet = spreadsheet.getSheetByName("Trend Data");
   var reportSheetData = reportSheet.getDataRange().getValues();
-  var sourcespreadsheet = SpreadsheetApp.openById("1avWCeq4oPCREfIWuSklJMoyYI68eC-tSDc5Si8EKiwI");
+  var sourcespreadsheet = SpreadsheetApp.openById("-tSDc5Si8EKiwI");
   var sourceSheet = sourcespreadsheet.getSheetByName("Data");
   var sourceSheetData = sourceSheet.getDataRange().getValues();
   for (let k = 1; k < reportSheetData.length; k++) {
