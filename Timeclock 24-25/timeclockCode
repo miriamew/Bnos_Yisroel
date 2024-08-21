@@ -61,7 +61,7 @@ function emailschedules() {
   for (i = 0; i < allInfo.length; i++) {
     text += "\n" + allInfo[i]
   }
-  MailApp.sendEmail("miriamwetstein@gmail.com", " Timeclock", text);
+  MailApp.sendEmail("@gmail.com", " Timeclock", text);
 }
 function createTrigger() {
   PropertiesService.getScriptProperties().setProperty('shouldRun', "T");
