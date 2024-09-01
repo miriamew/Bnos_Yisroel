@@ -24,3 +24,9 @@
   
 ## Electives Sorting
   * Creates reports of which classes students still need to take based on class categories, previous classes taken, and class requirements
+
+## Carpool Slot Assigning
+* Sort through all form submissions that represent carpools and divide into tab for each division's submissions
+* On the division tabs that hold all current students, assign what their method of carpool is and comments submitted
+* If method type is carpool, assign them a spot. Spots are A-Z and 1-12. If it is a big van carpool, they get a spot past P. Start with alternating spots then fill in spots once all alternates are filled
+* If a student goes home with a different division, find them and fill in division and carpool type
